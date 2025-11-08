@@ -91,7 +91,7 @@ def compute_poly_p(a):
     return Polynomial(coeficients)
 
 
-def compute_q(a, x):
+def compute_q_for(a, x):
     """
     Devuelve q(x), donde "q" es la función definida en el informe si x es escalar. Si es un vector, devuelve un vector
     con la función evaluada en cada punto.
@@ -102,8 +102,7 @@ def compute_q(a, x):
     x: Escalar o vector de longitud l en el cual se evalua la función.
 
     Retorna:
-    q(x) o un arreglo de la forma [q(x[0]),...,q(x[l])].
-    
+    q(x) o un arreglo de la forma [q(x[0]),...,q(x[l])], respectivamente.
     """
     m=len(a)
 
@@ -115,6 +114,75 @@ def compute_q(a, x):
     # Caso vector:
     powers = x[:,None]**-np.arange(1, m+1)  # Análogo a un producto externo
     return 1 - np.sum(a * powers, axis=1)   # Sumar filas
+
+
+def compute_q_prime_for(a, x):
+    """
+    Devuelve q'(x), donde "q" es la función definida en el informe si x es escalar. Si es un vector, devuelve un vector
+    con la función evaluada en cada punto.
+
+    Parámetros:
+    a: Vector de longitud m resultante del producto de Hadamard de las probabilidades acumuladas de superviviencia y
+    las tasas de fecundidad.
+    x: Escalar o vector de longitud l en el cual se evalua la función.
+
+    Retorna:
+    q'(x) o un arreglo de la forma [q'(x[0]),...,q'(x[l])], respectivamente.
+    """
+
+    m=len(a)
+
+    # Caso escalar:
+    if x.ndim == 0:
+        powers = x ** -np.arange(2, m+2)
+        powers = powers * np.arange(1,m+1)
+        return np.sum(a * powers)
+
+    # Caso vector:
+    powers = x[:,None]**-np.arange(2, m+2)  # Análogo a un producto externo
+    coefs = a * np.arange(1,m+1)
+    return np.sum(coefs * powers, axis=1)   # Sumar filas
+
+
+def gen_q(a):
+    """
+    Devuelve q, donde "q" es la función definida en el informe.
+
+    Parámetros:
+    a: Vector de longitud m resultante del producto de Hadamard de las probabilidades acumuladas de superviviencia y
+    las tasas de fecundidad.
+
+    Retorna:
+    q.
+    """
+
+    m = len(a)
+    exp = -np.arange(1, m+1)
+    def q(x):
+        return 1 - np.sum(a * (x ** exp))
+    
+    return q
+
+def gen_q_prime(a):
+    """
+    Devuelve q', donde "q" es la función definida en el informe.
+
+    Parámetros:
+    a: Vector de longitud m resultante del producto de Hadamard de las probabilidades acumuladas de superviviencia y
+    las tasas de fecundidad.
+
+    Retorna:
+    q'.
+    """
+    m=len(a)
+    exp = -np.arange(2, m+2)
+    coefs = a * np.arange(1,m+1)
+
+    # Caso escalar:
+    def q_prime(x):
+        return np.sum(coefs * (x ** exp))
+
+    return q_prime
 
 
 def compute_right_eig(c, lambda_0):
@@ -154,7 +222,8 @@ def aux_left_eig(a, lambda_0):
 
     # De esta forma se consigue un algoritmo con complejidad lineal 
     for j in reversed(range(m-1)):
-        g_lambda_0[j] = g_lambda_0[j+1] + a[j] * lambda_0**(m-j)
+        g_lambda_0[j] = g_lambda_0[j+1] + a[j] * lambda_0**(m-j-1)
+        
     return g_lambda_0
 
 
@@ -180,4 +249,12 @@ def compute_left_eig(c, a, lambda_0):
 
     return g / (c * powers)
 
-    
+
+def build_leslie_matrix(f, p):
+    n = len(f)
+    A = np.zeros((n,n))
+
+    A[0,:] = f
+    A[1:, 0:n-1] = np.diag(p[:n-1])
+
+    return A
