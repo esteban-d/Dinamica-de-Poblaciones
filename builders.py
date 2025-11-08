@@ -223,7 +223,7 @@ def aux_left_eig(a, lambda_0):
     # De esta forma se consigue un algoritmo con complejidad lineal 
     for j in reversed(range(m-1)):
         g_lambda_0[j] = g_lambda_0[j+1] + a[j] * lambda_0**(m-j-1)
-        
+
     return g_lambda_0
 
 
@@ -250,11 +250,84 @@ def compute_left_eig(c, a, lambda_0):
     return g / (c * powers)
 
 
+def compute_sensitivities(v, w):
+    """
+    Calcula la sensibilidad de lambda_0 respecto a cada parámetro de la matriz de Leslie mxm.
+
+    Parámetros:
+    v: autovector izquierdo asociado a lambda_0.
+    w: autovector derecho asociado a lambda_0.
+
+    Retorna:
+    sensi_f: vector de longitud m tal que sensi_f[i] es la sensibilidad de lambda_0 respecto a 
+    la tasa de fertilidad de la (i+1)-ésima etapa (contando las etapas a partir de 1).
+    sensi_s: vector de longitud m-1 tal que sensi_p[i] es la sensibilidad de lambda_0 respecto a la
+    tasa de superviviencia de la (i+1)-ésima etapa a la (i+2)-ésima etapa.
+    """
+
+    m = len(v)
+    # Sensibilidades de las tasas de fecundidad
+    sensi_f = np.empty(m)
+    # Sensibilidad de las tasas de superviviencia
+    sensi_p = np.empty(m-1)
+
+    for i in range(m):
+        sensi_f[i] = (v[0]*w[i]) / np.inner(v, w)
+
+    for i in range(m-1):
+        sensi_p[i] = (v[i+1]*w[i]) / np.inner(v, w)
+
+    return sensi_f, sensi_p
+
+def compute_elasticities(f, p, sensi_f, sensi_p, lambda_0):
+    """
+    Calcula la elasticidad de lambda_0 respecto a cada parámetro de la matriz de Leslie mxm.
+
+    Parámetros:
+    v: autovector izquierdo asociado a lambda_0.
+    w: autovector derecho asociado a lambda_0.
+    sensi_f: vector de longitud m con las sensibilidades de lambda_0 respecto a las tasas de fertilidad.
+    sensi_p: vector de longitud m-1 con las sensibilidades de lambda_0 respecto a las tasas de supervivencia.
+    lambda_0: tasa de crecimiento poblacional.
+
+    Retorna:
+    elast_f: vector de longitud m tal que elast_f[i] es la elasticidad de lambda_0 respecto a 
+    la tasa de fertilidad de la (i+1)-ésima etapa (contando las etapas a partir de 1).
+    elast_s: vector de longitud m-1 tal que elast_p[i] es la elasticidad de lambda_0 respecto a la
+    tasa de superviviencia de la (i+1)-ésima etapa a la (i+2)-ésima etapa.
+    """
+
+    m = len(f)
+    # Elasticidades de las tasas de fecundidad
+    elast_f = np.empty(m)
+    # Elasticidades de las tasas de superviviencia
+    elast_p = np.empty(m-1)
+
+    for i in range(m):
+        elast_f[i] = f[i] * sensi_f[i] / lambda_0
+
+    for i in range(m-1):
+        elast_p[i] = p[i] * sensi_p[i] / lambda_0
+
+    return elast_f, elast_p
+
+
 def build_leslie_matrix(f, p):
+    """
+    Construye una matriz de Leslie mxm.
+
+    Parámetros:
+    f: Vector de largo m con las tasas de fecundidad.
+    p: Vector de largo m-i con las tasas de superviviencia entre etapas.
+
+    Retorna: 
+    L: Matriz de Leslie construida a partir de f y p.
+    """
+
     n = len(f)
-    A = np.zeros((n,n))
+    L = np.zeros((n,n))
 
-    A[0,:] = f
-    A[1:, 0:n-1] = np.diag(p[:n-1])
+    L[0,:] = f
+    L[1:, 0:n-1] = np.diag(p[:n-1])
 
-    return A
+    return L

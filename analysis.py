@@ -57,9 +57,19 @@ def gather_information(f, p):
     right_eig = bl.compute_right_eig(c, lambda_0)
     left_eig = bl.compute_left_eig(c, a, lambda_0)
 
+    sensi_f, sensi_p = bl.compute_sensitivities(left_eig, right_eig)
+    elast_f, elast_p = bl.compute_elasticities(f, p, sensi_f, sensi_p, lambda_0)
+
     print(f"lambda_0: {lambda_0}")
     print(f"right eig: {right_eig}")
     print(f"left eig: {left_eig}")
+    print(f"sensi_f: {sensi_f}")
+    print(f"sensi_p: {sensi_p}")
+    print(f"elast_f: {elast_f}")
+    print(f"elast_p: {elast_p}")
+    print(f"Sumatoria elasticidades f: {np.sum(elast_f)}")
+    print(f"Sumatoria elasticidades p: {np.sum(elast_p)}")
+    print(f"Sumatoria elasticidades f y p: {np.sum(elast_f) + np.sum(elast_p)}")
 
     testing.is_right_eigenpair(f,p, lambda_0, right_eig)
     testing.is_left_eigenpair(f,p, lambda_0, left_eig)
