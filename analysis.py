@@ -133,8 +133,3 @@ info_4 = gather_information(f_4, p_4)
 #display_chacteristic_functions(f_4, p_4)
 
 
-f_5 = np.array([0, 0, 0, 0, 0.1], dtype=float)
-p_5 = np.array([0.9,0.8,0.7, 0.9], dtype=float)
-info_4 = gather_information(f_4, p_4)
-#print(testing.aproximate_lambda_0(f_3, p_3))
-#display_chacteristic_functions(f_4, p_4)

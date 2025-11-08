@@ -34,3 +34,23 @@ class LeslieInformation:
     c: np.ndarray
     R: np.ndarray
 
+    def __repr__(self):
+        """
+        Imprime la información más relevante para el análisis:
+        """
+        return(
+            f"-----------------------------------------------------------------------------------------------------------------------------------------------\n"
+            f"Información de la matriz de Leslie:\n"
+            f"-----------------------------------------------------------------------------------------------------------------------------------------------\n"
+            f"Tasa de crecimiento (autovalor dominante): {self.lambda_0}\n"
+            f"Autovector derecho: {self.right_eig}\n"
+            f"Autovector izquierdo: {self.left_eig}\n"
+            f"Sensibilidades respecto a tasas de fecundidad: {self.sensitivities_f}\n"
+            f"Sensibilidades respecto a tasas de superviviencia: {self.sensitivities_p}\n"
+            f"Elasticidades respecto a tasas de fecundidad: {self.elasticities_f}\n"
+            f"Elasticidades respecto a tasas de superviviencia: {self.elasticities_p}\n"
+            f"Índice de imprimitividad: {self.imprimitivity_index}\n"
+            f"Valor reproductivo neto: {self.R}\n"
+            f"-----------------------------------------------------------------------------------------------------------------------------------------------\n"
+        )
+
