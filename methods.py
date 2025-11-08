@@ -48,11 +48,19 @@ def bisect(g, a, b, sigma=def_tol, epsilon=def_tol, m=def_m):
     Retorna:
     Aproximación de una raiz de g en [a,b], a y b.
     """
+    
 
     u = g(a)
     v = g(b)
+
     e = b-a
     if np.sign(u) == np.sign(v):
+        # Casos borde (Cotas muy cercanas a lambda_0, un ejemplo simple es lambda_0=1)
+        if np.abs(e) < sigma or np.abs(g(a)) < epsilon:
+            return a, a, b
+        elif np.abs(g(b)) < epsilon:
+            return b, a, b
+        
         raise ValueError(f"Ambos extremos del intervalo tienen igual signo")
     
     for k in range(m):
@@ -69,7 +77,7 @@ def bisect(g, a, b, sigma=def_tol, epsilon=def_tol, m=def_m):
             a=c
             u=w
 
-    print(f"Bisección terminó tras con el máxico de iteraciones.")
+    print(f"Bisección terminó tras con el máximo de iteraciones.")
 
     return c, a, b
 

@@ -331,3 +331,19 @@ def build_leslie_matrix(f, p):
     L[1:, 0:n-1] = np.diag(p[:n-1])
 
     return L
+
+
+def compute_imprimitivity_index(f):
+    """
+    Calcula el índice de imprimitividad de una matriz de Leslie L (mxm).
+
+    Parámetros:
+    f: Vector de largo m con las tasas de fecundidad de L
+
+    Retorna: 
+    Índice de imprimitividad de L
+    """
+
+    indexes = np.where(f>0)[0] + 1 
+    return np.gcd.reduce(indexes)
+
