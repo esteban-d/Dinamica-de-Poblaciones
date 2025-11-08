@@ -67,7 +67,6 @@ def compute_boundaries(R, m):
     Vector de longitud dos tal que su primer elemento es una cota superior de la tasa de crecimiento poblacional
     y su segundo elemento es una cota inferior positiva de la tasa de crecimiento poblacional     
     """
-
     if R < 1:
         return R, R**(1/m)
     
@@ -87,28 +86,35 @@ def compute_poly_p(a):
     """
     
     # Coeficientes [1, -a[0],...,-a[m-1]]
-    coeficients = np.insert(-a, 0, 1)
+    coeficients = np.append(-np.flip(a), 1)
     
-    return np.polynomial(coeficients)
+    return Polynomial(coeficients)
 
 
 def compute_q(a, x):
     """
-    Devuelve q(x), donde "q" es la función definida en el informe.
+    Devuelve q(x), donde "q" es la función definida en el informe si x es escalar. Si es un vector, devuelve un vector
+    con la función evaluada en cada punto.
 
     Parámetros:
     a: Vector de longitud m resultante del producto de Hadamard de las probabilidades acumuladas de superviviencia y
     las tasas de fecundidad.
-    x: Escalar en el cual se evalua la función.
+    x: Escalar o vector de longitud l en el cual se evalua la función.
 
     Retorna:
-    q(x)
+    q(x) o un arreglo de la forma [q(x[0]),...,q(x[l])].
+    
     """
+    m=len(a)
 
-    m = len(a)
-    powers = x ** -np.arange(1,m+1)
-    terms_a = -a * powers
-    return 1- np.sum(terms_a)
+    # Caso escalar:
+    if x.ndim == 0:
+        powers = x ** -np.arange(1, m+1)
+        return 1 - np.sum(a * powers)
+
+    # Caso vector:
+    powers = x[:,None]**-np.arange(1, m+1)  # Análogo a un producto externo
+    return 1 - np.sum(a * powers, axis=1)   # Sumar filas
 
 
 def compute_right_eig(c, lambda_0):
