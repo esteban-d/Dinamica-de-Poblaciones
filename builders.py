@@ -348,8 +348,8 @@ def compute_imprimitivity_index(f):
 
 def compute_gamma(information: LeslieInformation, X):
     """
-    Calcula el coeficiente gamma definido en el Teorema 2, por lo que solo
-    tiene sentido cuando no existe dependencia temporal, es decir, cuando la matriz es primitiva.
+    Calcula el coeficiente gamma definido en el Teorema 2, aunque también utilizado en el
+    Teorema 3.
 
     Parámetros:
     leslie_information: Objeto LeslieInformation correspondiente a la matriz de interés.
@@ -358,7 +358,6 @@ def compute_gamma(information: LeslieInformation, X):
     Retorna
     Coeficiente el factor gamma definido en el Teorema 2.
     """
-    assert information.imprimitivity_index == 1, "La matriz debe ser primitiva"
 
     p_prime = information.poly_p.deriv()
     c = information.c
@@ -372,3 +371,32 @@ def compute_gamma(information: LeslieInformation, X):
         gamma += ( (lambda_0 ** j) * g_j_lambda_0[j] * X[j]) / (p_prime(lambda_0) * c[j])
 
     return gamma
+
+
+def compute_configurations(information: LeslieInformation, x):
+    """
+    Para una matriz de Leslie con índice de imprimitividad k, calcula las (a lo sumo) k configuraciones estables
+    entre las cuales alterna definidas por el Teorema 1
+    """
+    p_prime = information.poly_p.deriv()
+    c = information.c
+    lambda_0 = information.lambda_0
+    g_j_lambda_0 = information.g_i_lambda_0
+    m = len(c)
+
+    p_prime_lambda_0 = p_prime(lambda_0)
+    k = information.imprimitivity_index
+
+    right_eigen = information.right_eig
+
+    configurations = np.full((k, m), right_eigen/lambda_0)
+
+    for t in range(k):
+        for i in range(1, m+1):
+            gamma = 0
+            for j in range(1, m+1):
+                if j % k == (i-t) % k:
+                    gamma = gamma + (lambda_0**(j-1) * g_j_lambda_0[j-1] * x[j-1]) / c[j-1]
+            configurations[t, i-1] = configurations[t, i-1] * gamma * k / p_prime_lambda_0
+
+    return configurations

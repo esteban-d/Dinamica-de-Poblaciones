@@ -14,6 +14,7 @@ def check_hypothesis(f, p):
     """
     assert np.all(p>0) and np.all(p<=1), "Matriz inválida: Algunas clases serán redundantes en a lo sumo m-1 etapas"
     assert np.any(f>0), "La problación de extinguirá en a lo sumo m etapas"
+    assert f[-1]>0, "La matriz debe ser irreducible"
     assert len(f) == len(p)+1, "Dimensiones inconsistentes"
 
 def gather_information(f, p, method="newton"):
