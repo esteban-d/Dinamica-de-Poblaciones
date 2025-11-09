@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from data import LeslieInformation
+from builders import compute_gamma
 
 def normalize_1(v):
     """
@@ -14,20 +15,24 @@ def print_splitter(l=143):
     """
     print("-"*l)
 
-def display_population_evolution(L, X, T):
+def display_primitive_population_evolution(L, X, T, L_1_info: LeslieInformation):
     """
     Muestra dos gráficos: Uno con la evolución del tamaño de la población patiendo de X
     y otro con la evolución de la distribución proporcional por estadíos de la población.
     
     Parámetros:
-    X: población inicial
-    L: matriz de Leslie
-    T: períodos
+    X: población inicial.
+    L: matriz de Leslie.
+    T: períodos.
+    L_1_info: Objeto LeslieInformation correspondiente a la matriz de interés.
     """
+    assert L_1_info.imprimitivity_index == 1, "La matriz debe ser primitiva"
 
     m = L.shape[0]
 
     ts = np.arange(0, T)
+
+    
     ys = np.empty((T, m))
     ys[0] = X
 
@@ -38,10 +43,16 @@ def display_population_evolution(L, X, T):
     total_ys = np.sum(ys, axis=1)
     ys_norm = ys / np.sum(ys, axis=1, keepdims=True)
 
+    # Teorema 2
+    gamma = compute_gamma(L_1_info, X)
+    base = gamma * np.sum(L_1_info.right_eig/L_1_info.lambda_0) # Notar que escala autovector (según teorema)
+    total_ys_aprox = base * L_1_info.lambda_0**ts
+
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16,7))
 
     ax1.plot(ts, total_ys, label="Evolución de la población total")
+    ax1.plot(ts, total_ys_aprox, label="Aproximación - Teorema 2")
     ax1.set_xlabel("Periodo")
     ax1.set_ylabel("Población Total")
     ax1.set_title("Población Total")
@@ -69,8 +80,7 @@ def display_population_sen_elast(leslie_information: LeslieInformation):
         * Elasticidades respecto a las tasas de supervivencia.
 
     Parámetros:
-    leslie_information:
-    Objeto LeslieInformation correspondiente a la matriz de interés.
+    leslie_information: Objeto LeslieInformation correspondiente a la matriz de interés.
     """
 
 
@@ -121,7 +131,7 @@ def display_age_distribution(leslie_information: LeslieInformation):
     leslie_information:
     Objeto LeslieInformation correspondiente a la matriz de interés.
     """
-    assert leslie_information.imprimitivity_index==1, "Pueden haber múltiples distribuciones estables"
+    assert leslie_information.imprimitivity_index==1, "Puede haber múltiples distribuciones estables"
 
     dist = normalize_1(leslie_information.left_eig)
     m = len(dist)

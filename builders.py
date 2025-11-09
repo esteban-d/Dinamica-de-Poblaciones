@@ -1,5 +1,6 @@
 import numpy as np
 from numpy.polynomial import Polynomial
+from data import LeslieInformation
 
 def compute_c(p):
     """
@@ -203,7 +204,7 @@ def compute_right_eig(c, lambda_0):
     return c/x
 
 
-def aux_left_eig(a, lambda_0):
+def compute_g_i(a, lambda_0):
     """
     Función auxiliar de compute_left_eig. Calcula cada g_i(lambda_0), donde g_i es la función definida en el informe. 
 
@@ -227,7 +228,7 @@ def aux_left_eig(a, lambda_0):
     return g_lambda_0
 
 
-def compute_left_eig(c, a, lambda_0):
+def compute_left_eig(c, g_i_lambda_0, lambda_0):
     """
     Calcula un autovector izquierdo con entradas no negativas asociado al único autovalor positivo de la matriz de Leslie
     (o tasa de crecimiento poblacional).
@@ -243,11 +244,9 @@ def compute_left_eig(c, a, lambda_0):
     """
     m = len(c)
 
-    g = aux_left_eig(a, lambda_0)
-
     powers = lambda_0 ** np.arange(m,0,-1)
 
-    return g / (c * powers)
+    return g_i_lambda_0 / (c * powers)
 
 
 def compute_sensitivities(v, w):
@@ -347,3 +346,29 @@ def compute_imprimitivity_index(f):
     indexes = np.where(f>0)[0] + 1 
     return np.gcd.reduce(indexes)
 
+def compute_gamma(information: LeslieInformation, X):
+    """
+    Calcula el coeficiente gamma definido en el Teorema 2, por lo que solo
+    tiene sentido cuando no existe dependencia temporal, es decir, cuando la matriz es primitiva.
+
+    Parámetros:
+    leslie_information: Objeto LeslieInformation correspondiente a la matriz de interés.
+    X: Vector con la población inicial.
+
+    Retorna
+    Coeficiente el factor gamma definido en el Teorema 2.
+    """
+    assert information.imprimitivity_index == 1, "La matriz debe ser primitiva"
+
+    p_prime = information.poly_p.deriv()
+    c = information.c
+    lambda_0 = information.lambda_0
+    g_j_lambda_0 = information.g_i_lambda_0
+
+    m = len(c)
+
+    gamma = 0
+    for j in range(m):
+        gamma += ( (lambda_0 ** j) * g_j_lambda_0[j] * X[j]) / (p_prime(lambda_0) * c[j])
+
+    return gamma

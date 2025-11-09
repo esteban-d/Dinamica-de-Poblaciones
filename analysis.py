@@ -46,16 +46,20 @@ def gather_information(f, p, method="newton"):
         lambda_0 = met.bisect(q, cota_inf, cota_sup)
     else:
         raise Exception("Método Inválido")
+     
+    g_i_lambda_0 = bl.compute_g_i(a, lambda_0)
 
     right_eig = bl.compute_right_eig(c, lambda_0)
-    left_eig = bl.compute_left_eig(c, a, lambda_0)
+    left_eig = bl.compute_left_eig(c, g_i_lambda_0, lambda_0)
 
     sensi_f, sensi_p = bl.compute_sensitivities(left_eig, right_eig)
     elast_f, elast_p = bl.compute_elasticities(f, p, sensi_f, sensi_p, lambda_0)
 
     imprimitivity_index = bl.compute_imprimitivity_index(f)
 
-    return LeslieInformation(lambda_0, right_eig,left_eig, sensi_f, sensi_p, elast_f, elast_p,imprimitivity_index, a, c, R)
+    poly_p = bl.compute_poly_p(a)
+
+    return LeslieInformation(lambda_0, right_eig,left_eig, sensi_f, sensi_p, elast_f, elast_p,imprimitivity_index, a, c, R, poly_p, g_i_lambda_0)
 
 
 def display_chacteristic_functions(f, p):

@@ -23,7 +23,6 @@ def ejemplo_1():
     p_1 = np.array([0.3, 0.7, 0.9, 0.9, 0.9, 0.6], dtype=float)
     X = np.array([10, 2, 8, 5, 12, 0, 1], dtype=float)
 
-    m_1 = len(f_1)
     L_1 = bl.build_leslie_matrix(f_1, p_1)
 
     print("Analicemos la matriz L_1")
@@ -40,7 +39,7 @@ def ejemplo_1():
     # Se observa que coinciden
     poblacion_obtenida = np.linalg.matrix_power(L_1, 1000) @ X
     distribucion_obtenida = mis.normalize_1(poblacion_obtenida)
-    print(f"Distribución obtenida por franja etaria (tras 1000 periodos (o 1000 años)): {distribucion_esperada}")
+    print(f"Distribución obtenida por franja etaria tras 1000 periodos (o 1000 años): {distribucion_obtenida}")
 
     # También podemos expresar la distribución en un gráfico de barras
     mis.display_age_distribution(L_1_info)
@@ -49,7 +48,7 @@ def ejemplo_1():
 
     # Graficando podemos analizar cómo evoluciona la distribución por etapas y la población total
     # a lo largo del tiempo.
-    mis.display_population_evolution(L_1, X, 20)
+    mis.display_primitive_population_evolution(L_1, X, 20, L_1_info)
 
     # Grafiquemos ahora las sensibilidades y las elasticidades. Notemos que efectivamente la suma de las
     # Elasticidades es 1

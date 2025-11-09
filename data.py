@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import numpy as np
-
+from numpy.polynomial import Polynomial
 
 @dataclass
 class LeslieInformation:
@@ -20,6 +20,8 @@ class LeslieInformation:
         a: Producto de Hadamard entre los vectores fecundidad y supervivencia acumulada.
         c: Vector de longitud m con la supervivencia acumulada.
         R: Valor reproductivo neto.
+        poly_p: Polinomio tal que sus raíces son los autovalores de la matriz (característico salvo quizás por el signo).
+        g_i_lambda_0: Funciones g_i definidas en el informe evaluadas en lambda_0
     """
 
     lambda_0: float
@@ -33,6 +35,8 @@ class LeslieInformation:
     a: np.ndarray
     c: np.ndarray
     R: np.ndarray
+    poly_p: Polynomial
+    g_i_lambda_0: np.ndarray
 
     def __repr__(self):
         """
