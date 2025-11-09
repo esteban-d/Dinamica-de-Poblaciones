@@ -21,6 +21,7 @@ def newton(g, g_prima, x0, sigma=def_tol, epsilon=def_tol, m=def_m):
         
     v = g(x0)
     if np.abs(v) < epsilon:
+        print("Newton utlizó la cota inferior")
         return x0
     
     for k in range(m):

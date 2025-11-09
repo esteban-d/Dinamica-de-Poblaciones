@@ -5,15 +5,13 @@ import miscellaneous as mis
 import matplotlib.pyplot as plt
 
 """
-Se proponen dos ejemplos a modo de demostración. 
-    * Una matriz primitiva L_1, es decir, con índice de imprimtividad k_1=1, que alcanza una distribución estable en el límite.
-    * Una matriz no primitiva L_2, o equivalentemente, con índice de imprimitividad k_2>1, que alterna entre a los sumo k
-        configuraciones estables en el límite. 
-
-    Notemos que en realidad ambos casos son descriptos por completo por el primer teorema del informe, solo que en el primer caso, 
-    la población "alterna" entre una única configuración estable.
-
-    Adicionalmente, en el segundo caso escalaremos el vector de fecundidades para contemplar los casos lambda_0<1, lambda_0=1 y lambda_0>1. 
+    Se proponen tres ejemplos a modo de demostración:
+    * Una matriz primitiva L_1, es decir, con índice de imprimitividad k_1=1, que en el límite alcanza una distribución estable entre 
+    franjas etarias y crece indefinidamente.
+    * Una matriz no primitiva L_2, o equivalentemente, con índice de imprimitividad k_2>1, que también crece indefinidamente pero 
+    cuya distribución alterna entre dos configuraciones.
+    * A modo de completitud, se incluyen dos matrices adicionales, resultantes de escalar el vector de fecundidades de L_2 de manera tal que lambda_0<1 
+    y lambda_0=1. El comportamiento oscilatorio se mantiene, pero en el límite, la población (en promedio) decrece o se mantiene estable.
 """
 
 # Ejemplo 1 (Matriz basada en el ejercicio 5 del práctico 6 de AN2)
@@ -32,16 +30,19 @@ def ejemplo_1():
     # Su índice de imprimitividad efectivamente es 1
     # Además, el Teorema 4 nos dice que el factor gamma es positivo para la población inicial X
     # Luego, el Teorema 2 nos indica que la proporción de la población en cada clase converge a
-    # Y dado que lambda_0>1, la población debería crecer hasta el infinito
+    # cualquier autovector normalizado en norma 1
+    # Y dado que lambda_0>1, la población debería crecer sin límite
     distribucion_esperada = mis.normalize_1(L_1_info.right_eig)
-    print(f"Distribución esperada por franja etaria: {distribucion_esperada}")
+    print(f"Distribución esperada por franja etaria: \n{distribucion_esperada}")
+
+    mis.print_splitter()
 
     # Se observa que coinciden
     poblacion_obtenida = np.linalg.matrix_power(L_1, 1000) @ X_1
     distribucion_obtenida = mis.normalize_1(poblacion_obtenida)
-    print(f"Distribución obtenida por franja etaria tras 1000 periodos (o 1000 años): {distribucion_obtenida}")
+    print(f"Distribución obtenida por franja etaria tras 1000 periodos (o 1000 años): \n{distribucion_obtenida}")
 
-    # También podemos expresar la distribución en un gráfico de barras
+    # También podemos expresar la distribución con un gráfico de barras
     mis.display_ages_distributions(np.array([distribucion_esperada]))
 
     mis.print_splitter()
@@ -77,22 +78,23 @@ def ejemplo_2():
     # Debería alternar entre a lo sumo dos configuraciones estables en el límite. 
     # Verifiquemos esto
     configs = bl.compute_configurations(L_2_info, X_2)
-    distribucion_esperada1 = mis.normalize_1(configs[0])
-    distribucion_esperada2 = mis.normalize_1(configs[1])
     distribuciones_esperadas = np.apply_along_axis(mis.normalize_1, 1, configs)
     print(f"Distribución esperada por franja etaria")
     print(*distribuciones_esperadas, sep="\n")
+
+    mis.print_splitter()
 
     # Se observa que coinciden
     poblacion_obtenida = np.linalg.matrix_power(L_2, 1000) @ X_2
     distribucion_obtenida_1 = mis.normalize_1(poblacion_obtenida)
     distribucion_obtenida_2 = mis.normalize_1(L_2@poblacion_obtenida)
-    print("Distribuciones obtenida por franja etaria tras 1000 periodos (o 1000 años):")
+    print("Distribuciones obtenidas por franja etaria tras 1000 periodos (o 1000 años):")
     print(f"{distribucion_obtenida_1}")
     print(f"{distribucion_obtenida_2}")
 
+    mis.print_splitter()
 
-    # También podemos expresar las distribuciones en un gráfico de barras
+    # También podemos expresar las distribuciones con un gráfico de barras
     mis.display_ages_distributions(distribuciones_esperadas)
 
 
@@ -101,7 +103,7 @@ def ejemplo_2():
     mis.display_population_evolution(L_2, X_2, 20, L_2_info)
 
 
-    # Verifiquemos que el límite predicho por el teorema 1 es correcto para un matriz no primitiva
+    # Verifiquemos que el límite predicho por el teorema 1 es correcto para una matriz no primitiva
     mis.display_nonprimitive_evolution(L_2, X_2, 20, configs, L_2_info.lambda_0)
 
 
@@ -111,5 +113,38 @@ def ejemplo_2():
 
     mis.print_splitter()
 
-    # Graficamos sensibilidades y elasticidades
+    # Graficamos las sensibilidades y elasticidades
     mis.display_population_sen_elast(L_2_info)
+
+def ejemplo_3():
+    # Escalamos la matriz para lograr que lambda_0<1
+    f_2_dec = 2.5*np.array([0.0, 0.2, 0, 0.9, 0, 0.8], dtype=float)
+    p_2_dec = np.array([0.3, 0.7, 0.9, 0.9, 0.9], dtype=float)
+    X_2_dec = np.array([10, 2, 8, 5, 12, 0], dtype=float)
+
+    L_2_dec = bl.build_leslie_matrix(f_2_dec, p_2_dec)
+
+    # Confirmamos. que lambda_0 < 1. Esperamos que la población total decrezca en promedio 
+    # con un patrón oscilatorio similar
+    print("Analicemos la matriz L_2_dec")
+    L_2_dec_info = gather_information(f_2_dec, p_2_dec)
+    print(L_2_dec_info)
+
+    mis.display_population_evolution(L_2_dec, X_2_dec, 40, L_2_dec_info)
+
+    # Escalamos la matriz para lograr que lambda_0 = 1. 
+    stabilization_factor = 1/L_2_dec_info.R
+    f_2_stab = (stabilization_factor)*f_2_dec
+    p_2_stab = p_2_dec
+    X_2_stab = X_2_dec
+
+    # Confirmamos. que lambda_0 < 1. Esperamos que la población total 
+    # se mantenga estable en promedio con un patrón oscilatorio similar
+    L_2_stab = bl.build_leslie_matrix(f_2_stab, p_2_stab)
+
+
+    print("Analicemos la matriz L_2_stab")
+    L_2_stab_info = gather_information(f_2_stab, p_2_stab)
+    print(L_2_stab_info)
+
+    mis.display_population_evolution(L_2_stab, X_2_stab, 40, L_2_stab_info)

@@ -207,9 +207,6 @@ def display_ages_distributions(distributions):
     """
     k, m = distributions.shape
 
-    print(distributions)
-    print(distributions.shape)
-
     rango = np.arange(1,m+1)
 
     fig, axs = plt.subplots(k,1, figsize=(17,10))
