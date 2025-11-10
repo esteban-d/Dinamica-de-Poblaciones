@@ -138,7 +138,7 @@ def ejemplo_3():
     p_2_stab = p_2_dec
     X_2_stab = X_2_dec
 
-    # Confirmamos. que lambda_0 < 1. Esperamos que la población total 
+    # Confirmamos que lambda_0 = 1. Esperamos que la población total 
     # se mantenga estable en promedio con un patrón oscilatorio similar
     L_2_stab = bl.build_leslie_matrix(f_2_stab, p_2_stab)
 

@@ -3,6 +3,17 @@ import matplotlib.pyplot as plt
 from data import LeslieInformation
 from builders import compute_gamma
 
+plt.rcParams.update({
+    'font.size': 14,
+    'axes.titlesize': 16,
+    'axes.labelsize': 14,
+
+    'xtick.labelsize': 12,
+    'ytick.labelsize': 12,
+    'legend.fontsize': 12,
+    'figure.titlesize': 18
+})
+
 def normalize_1(v):
     """
     Normaliza un vector en norma 1
@@ -18,7 +29,7 @@ def print_splitter(l=143):
 def display_population_evolution(L, X, T, L_1_info: LeslieInformation):
     """
     Muestra dos gráficos: Uno con la evolución del tamaño de la población partiendo de X
-    y otro con la evolución de la distribución proporcional por estadíos.
+    y otro con la evolución de la distribución proporcional por estadios.
     En el primer caso, compara la población total con la predicha por los teoremas
     1 o 3. 
     
@@ -55,19 +66,19 @@ def display_population_evolution(L, X, T, L_1_info: LeslieInformation):
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16,7))
 
-    ax1.plot(ts, total_ys, label="Evolución de la población total")
+    ax1.plot(ts, total_ys, label="Población total")
     ax1.plot(ts, total_ys_aprox, label="Aproximación - Teorema 2 o 3")
     ax1.set_xlabel("Periodo")
     ax1.set_ylabel("Población")
-    ax1.set_title("Evolución de la población Total")
+    ax1.set_title("Evolución de la población total")
     ax1.legend()
     ax1.grid()
 
     for i in range(m):
-        ax2.plot(ts, ys_norm.T[i], label=f"estadío {i+1}")
+        ax2.plot(ts, ys_norm.T[i], label=f"Estadio {i+1}")
     ax2.set_xlabel("Periodo")
     ax2.set_ylabel("Proporción")
-    ax2.set_title("Evolución de la distribución por estadío")
+    ax2.set_title("Evolución de la distribución por estadio")
     ax2.legend()
     ax2.grid()
     
@@ -112,7 +123,7 @@ def display_nonprimitive_evolution(L, X, T, stable_configs, lambda_0):
     plt.plot(ts, total_ys_pred, label="Aproximación - Teorema 1")
     plt.xlabel("Periodo")
     plt.ylabel("Población")
-    plt.title("Evolución de la población Total")
+    plt.title("Evolución de la población total")
     plt.legend()
     plt.grid()
     
@@ -171,29 +182,6 @@ def display_population_sen_elast(leslie_information: LeslieInformation):
     plt.show()
     
 
-@DeprecationWarning
-def display_age_distribution(leslie_information: LeslieInformation):
-    """
-    Representa una distribución etaria estable en un gráfico de barras
-
-    Parámetros:
-    leslie_information:
-    Objeto LeslieInformation correspondiente a la matriz de interés.
-    """
-    assert leslie_information.imprimitivity_index==1, "Puede haber múltiples distribuciones estables"
-
-    dist = normalize_1(leslie_information.left_eig)
-    m = len(dist)
-    
-    plt.bar(np.arange(1,m+1), dist, color="green")
-    plt.title("Distribución estable")
-    plt.xlabel("Clase")
-    plt.ylabel("Proporción")
-
-    plt.tight_layout()
-    plt.show()
-
-
 def display_ages_distributions(distributions):
     """
     Dada una matriz de Leslie, muestra 4 gráficos:
@@ -209,7 +197,7 @@ def display_ages_distributions(distributions):
 
     rango = np.arange(1,m+1)
 
-    fig, axs = plt.subplots(k,1, figsize=(17,10))
+    fig, axs = plt.subplots(k,1, figsize=(10, 3*k))
     axs = np.ravel(axs) # De esta forma funciona para matrices primitivas
 
     for i in range(k):
@@ -218,6 +206,6 @@ def display_ages_distributions(distributions):
         axs[i].set_xlabel("Clase")
         axs[i].set_ylabel("Proporción")
 
-    plt.suptitle("Distribuciones")
+    plt.suptitle("Distribución")
     plt.tight_layout()
     plt.show()
