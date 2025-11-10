@@ -9,10 +9,10 @@ def check_hypothesis(f, p):
     Verifica las propiedades asumidas sobre matrices de Leslie bajo las cuales tiene sentido el análisis realizado.
 
     Parámetros:
-    f: arreglo de longitud m con las tasas de fecundidad de cada etapa
-    p: arreglo de longitud m-1 con las tasas de supervivencia entre etapas
+    f: arreglo de longitud m con las tasas de fecundidad de cada etapa.
+    p: arreglo de longitud m-1 con las tasas de supervivencia entre etapas.
     """
-    assert np.all(p>0) and np.all(p<=1), "Matriz inválida: Algunas clases serán redundantes en a lo sumo m-1 etapas"
+    assert np.all(p>0) and np.all(p<=1), "Matriz reducible: Algunas clases serán redundantes en a lo sumo m-1 etapas"
     assert np.any(f>0), "La problación de extinguirá en a lo sumo m etapas"
     assert len(f) == len(p)+1, "Dimensiones inconsistentes"
 
@@ -24,7 +24,7 @@ def gather_information(f, p, method="newton"):
     Parámetros:
         f: Vector de longitud m con las tasas de fecundidad de cada etapa.
         p: Vector de longitud m-1 con las tasas de superviviencia entre etapas.
-        method: Método numérico que se utilizará para aproximar la tasa de crecimiento. Por defecto se utilizar "newton"
+        method: Método numérico que se utilizará para aproximar la tasa de crecimiento. Por defecto se utiliza "newton"
         aunque también se encuentra disponible "bisec".
 
     Retorna:

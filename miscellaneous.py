@@ -30,12 +30,12 @@ def display_population_evolution(L, X, T, L_1_info: LeslieInformation):
     """
     Muestra dos gráficos: Uno con la evolución del tamaño de la población partiendo de X
     y otro con la evolución de la distribución proporcional por estadios.
-    En el primer caso, compara la población total con la predicha por los teoremas
+    En el primer gráfico, compara la población total con la predicha por los teoremas
     1 o 3. 
     
     Parámetros:
-    X: población inicial.
     L: matriz de Leslie.
+    X: población inicial.
     T: períodos.
     L_1_info: Objeto LeslieInformation correspondiente a la matriz de interés.
     """
@@ -55,9 +55,9 @@ def display_population_evolution(L, X, T, L_1_info: LeslieInformation):
     total_ys = np.sum(ys, axis=1)
     ys_norm = ys / np.sum(ys, axis=1, keepdims=True)
 
-    # Por Teorema 2, si la matriz es primitiva, la siguiente función se aproxima en el límite
+    # Por Teorema 2, si la k=1, la siguiente función se aproxima en el límite
     # a la problación total.
-    # Por Teorema 4, si el índice de imprimitividad es mayor a 1, la función utilizada en el caso primitivo
+    # Por Teorema 4, si k>1, la función utilizada en el caso primitivo
     # se asemeja en promedio a la del caso primitivo.
     gamma = compute_gamma(L_1_info, X)
     base = gamma * np.sum(L_1_info.right_eig/L_1_info.lambda_0) # Notar que escala autovector (según teorema)
@@ -87,7 +87,7 @@ def display_population_evolution(L, X, T, L_1_info: LeslieInformation):
 
 def display_nonprimitive_evolution(L, X, T, stable_configs, lambda_0):
     """
-    Para una matriz no primitiva, grafica el límite expuesto por el Teorema 1 para la población total contra
+    Para una matriz con k>1, grafica el límite expuesto por el Teorema 1 para la población total contra
     la población total real. También puede utilizarse con matrices no primitivas, pero en tal caso el 
     grafico coincidiría con el de display_population_evolution.
     
@@ -198,7 +198,7 @@ def display_ages_distributions(distributions):
     rango = np.arange(1,m+1)
 
     fig, axs = plt.subplots(k,1, figsize=(10, 3*k))
-    axs = np.ravel(axs) # De esta forma funciona para matrices primitivas
+    axs = np.ravel(axs) # k podría ser 1
 
     for i in range(k):
         axs[i].bar(rango, distributions[i])

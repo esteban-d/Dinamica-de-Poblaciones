@@ -46,6 +46,13 @@ Además, el módulo también incluye una función `display_characteristic_functi
 - `ejemplos.py`:
 Cuenta con tres ejemplos de análisis de poblaciones. En todos los casos se grafican los resultados.
 
+### Visualización de un ejemplo
+
+```python 
+# Para visualizar el primer ejemplo: 
+ejemplo_1()
+```
+
 - `miscellaneous.py`: 
 Módulo auxiliar de `ejemplos.py`. Incluye funciones que ayudan a visualizar datos.
 

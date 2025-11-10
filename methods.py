@@ -21,7 +21,7 @@ def newton(g, g_prima, x0, sigma=def_tol, epsilon=def_tol, m=def_m):
         
     v = g(x0)
     if np.abs(v) < epsilon:
-        print("Newton utlizó la cota inferior")
+        print("Newton utilizó la cota inferior.")
         return x0
     
     for k in range(m):
@@ -46,11 +46,11 @@ def bisect(g, a, b, sigma=def_tol, epsilon=def_tol, m=def_m):
     m: número máximo de iteraciones.
     sigma: toleracia para el error en la variable independiente.
     epsilon: tolerancia para los valores funcionales.
+
     Retorna:
     Aproximación de una raiz de g en [a,b], a y b.
     """
     
-
     u = g(a)
     v = g(b)
 
@@ -62,7 +62,7 @@ def bisect(g, a, b, sigma=def_tol, epsilon=def_tol, m=def_m):
         elif np.abs(g(b)) < epsilon:
             return b, a, b
         
-        raise ValueError(f"Ambos extremos del intervalo tienen igual signo")
+        raise ValueError(f"Ambos extremos del intervalo tienen igual signo.")
     
     for k in range(m):
         e = e/2
@@ -97,8 +97,9 @@ def hybrid(g, g_prima, a, b, m, sigma=def_tol, epsilon=def_tol, bisec_max_iterat
     sigma: toleracia para el error en la variable independiente.
     epsilon: tolerancia para los valores funcionales.
     bisec_max_iterations: número máximo de iteraciones de bisección.
+
     Retorna:
-    Aproximación de una raiz de g en [a,b], a y b.
+    Aproximación de una raiz de g en [a,b]
     """
 
     # Se requiere que newton inicie a la izquierda de la raiz para asegurar convergencia.

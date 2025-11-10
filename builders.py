@@ -4,11 +4,11 @@ from data import LeslieInformation
 
 def compute_c(p):
     """
-    Calcula las probabilidades acumuladas de superviviencia c_i entre cualesquiera dos estadíos.
+    Calcula las probabilidades acumuladas de superviviencia c_i.
     
     Parámetros: 
     p: Vector de longitud m-1 tal que p[i] es la tasa de supervivencia de la etapa i+1 a la 
-    etapa i+2.
+    etapa i+2 (considerando a 1 como la primera etapa).
 
     Retorna:
     c: Vector de longitud m tal que: 
@@ -62,11 +62,11 @@ def compute_boundaries(R, m):
 
     Parámetros:
     R: Valor reproductivo neto de la población.
-    m: Número de estadíos poblacionales.
+    m: Número de estadios poblacionales.
 
     Retorna:
-    Vector de longitud dos tal que su primer elemento es una cota superior de la tasa de crecimiento poblacional
-    y su segundo elemento es una cota inferior positiva de la tasa de crecimiento poblacional     
+    Vector de longitud dos tal que su primer elemento es una cota inferior positiva de la tasa de crecimiento poblacional
+    y su segundo elemento es una cota superior de la tasa de crecimiento poblacional     
     """
     if R < 1:
         return R, R**(1/m)
@@ -320,7 +320,7 @@ def build_leslie_matrix(f, p):
     p: Vector de largo m-i con las tasas de superviviencia entre etapas.
 
     Retorna: 
-    L: Matriz de Leslie construida a partir de f y p.
+    L: Matriz de Leslie mxm construida a partir de f y p.
     """
 
     n = len(f)
@@ -337,10 +337,10 @@ def compute_imprimitivity_index(f):
     Calcula el índice de imprimitividad de una matriz de Leslie L (mxm).
 
     Parámetros:
-    f: Vector de largo m con las tasas de fecundidad de L
+    f: Vector de largo m con las tasas de fecundidad de L.
 
     Retorna: 
-    Índice de imprimitividad de L
+    Índice de imprimitividad de L.
     """
 
     indexes = np.where(f>0)[0] + 1 
@@ -376,7 +376,15 @@ def compute_gamma(information: LeslieInformation, X):
 def compute_configurations(information: LeslieInformation, x):
     """
     Para una matriz de Leslie con índice de imprimitividad k, calcula las (a lo sumo) k configuraciones estables
-    entre las cuales alterna definidas por el Teorema 1
+    entre las cuales alterna definidas por el Teorema 1. En particular, calcula la única configuración estable
+    definida en el Teorema 2 si k=1.
+
+    Parámetros:
+    leslie_information: Objeto LeslieInformation correspondiente a la matriz de interés.
+    X: Vector con la población inicial.
+
+    Retorna:
+    Vector con las k definidas por el Teorema 1.
     """
     p_prime = information.poly_p.deriv()
     c = information.c

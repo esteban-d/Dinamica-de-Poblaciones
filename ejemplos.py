@@ -2,21 +2,19 @@ import numpy as np
 from analysis import gather_information
 import builders as bl
 import miscellaneous as mis
-import matplotlib.pyplot as plt
 
 """
     Se proponen tres ejemplos a modo de demostración:
-    * Una matriz primitiva L_1, es decir, con índice de imprimitividad k_1=1, que en el límite alcanza una distribución estable entre 
+    * Una matriz L_1 con índice de imprimitividad k_1=1, que en el límite alcanza una distribución estable entre 
     franjas etarias y crece indefinidamente.
-    * Una matriz no primitiva L_2, o equivalentemente, con índice de imprimitividad k_2>1, que también crece indefinidamente pero 
-    cuya distribución alterna entre dos configuraciones.
+    * Una matriz L_2 con índice de imprimitividad k_2>1, que también crece indefinidamente en promedio pero 
+    cuya distribución alterna entre dos distribuciones.
     * A modo de completitud, se incluyen dos matrices adicionales, resultantes de escalar el vector de fecundidades de L_2 de manera tal que lambda_0<1 
-    y lambda_0=1. El comportamiento oscilatorio se mantiene, pero en el límite, la población (en promedio) decrece o se mantiene estable.
+    y lambda_0=1. El comportamiento oscilatorio se mantiene, pero en el límite, la población (en promedio) decrece o se mantiene estable, respectivamente.
 """
 
 # Ejemplo 1 (Matriz basada en el ejercicio 5 del práctico 6 de AN2)
 def ejemplo_1():
-    # Periodos de un año (simplemente para elegir una unidad)
     f_1 = 2.0*np.array([0.0, 0.2, 0.9, 0.9, 0.9, 0.8, 0.3], dtype=float)
     p_1 = np.array([0.3, 0.7, 0.9, 0.9, 0.9, 0.6], dtype=float)
     X_1 = np.array([10, 2, 8, 5, 12, 0, 1], dtype=float)
@@ -29,32 +27,28 @@ def ejemplo_1():
 
     # Su índice de imprimitividad efectivamente es 1
     # Además, el Teorema 4 nos dice que el factor gamma es positivo para la población inicial X
-    # Luego, el Teorema 2 nos indica que la proporción de la población en cada clase converge a
-    # cualquier autovector normalizado en norma 1
-    # Y dado que lambda_0>1, la población debería crecer sin límite
+    # Luego, el Teorema 2 nos indica que la proporción de la población en cada clase converge a la de
+    # cualquier autovector normalizado en norma 1 y dado que lambda_0>1, la población debería crecer sin límite
     distribucion_esperada = mis.normalize_1(L_1_info.right_eig)
     print(f"Distribución esperada por franja etaria: \n{distribucion_esperada}")
-
     mis.print_splitter()
 
     # Se observa que coinciden
     poblacion_obtenida = np.linalg.matrix_power(L_1, 1000) @ X_1
     distribucion_obtenida = mis.normalize_1(poblacion_obtenida)
-    print(f"Distribución obtenida por franja etaria tras 1000 periodos (o 1000 años): \n{distribucion_obtenida}")
+    print(f"Distribución obtenida por franja etaria tras 1000 periodos: \n{distribucion_obtenida}")
+    mis.print_splitter()
 
     # También podemos expresar la distribución con un gráfico de barras
     mis.display_ages_distributions(np.array([distribucion_esperada]))
 
-    mis.print_splitter()
-
-    # Graficando podemos analizar cómo evoluciona la distribución por etapas y la población total
+    # Graficando podemos analizar cómo evoluciona la distribución y la población total
     # a lo largo del tiempo.
     mis.display_population_evolution(L_1, X_1, 20, L_1_info)
 
     # Grafiquemos ahora las sensibilidades y las elasticidades. Notemos que efectivamente la suma de las
     # Elasticidades es 1
     print(f"Suma de las elasticidades: {np.sum(L_1_info.elasticities_f) + np.sum(L_1_info.elasticities_p)}")
-
     mis.print_splitter()
 
     # Graficamos sensibilidades y elasticidades
@@ -75,14 +69,14 @@ def ejemplo_2():
     print(L_2_info)
 
     # Su indice de imprimitividad es efectivamente 2
-    # Debería alternar entre a lo sumo dos configuraciones estables en el límite. 
+    # Debería alternar entre a lo sumo dos distribuciones en el límite. 
     # Verifiquemos esto
     configs = bl.compute_configurations(L_2_info, X_2)
     distribuciones_esperadas = np.apply_along_axis(mis.normalize_1, 1, configs)
     print(f"Distribución esperada por franja etaria")
     print(*distribuciones_esperadas, sep="\n")
-
     mis.print_splitter()
+
 
     # Se observa que coinciden
     poblacion_obtenida = np.linalg.matrix_power(L_2, 1000) @ X_2
@@ -91,14 +85,14 @@ def ejemplo_2():
     print("Distribuciones obtenidas por franja etaria tras 1000 periodos (o 1000 años):")
     print(f"{distribucion_obtenida_1}")
     print(f"{distribucion_obtenida_2}")
-
     mis.print_splitter()
+
 
     # También podemos expresar las distribuciones con un gráfico de barras
     mis.display_ages_distributions(distribuciones_esperadas)
 
 
-    # Graficando podemos analizar cómo evoluciona la distribución por etapas y la población total
+    # Graficando podemos analizar cómo evoluciona la distribución y la población total
     # a lo largo del tiempo.
     mis.display_population_evolution(L_2, X_2, 20, L_2_info)
 
@@ -110,8 +104,8 @@ def ejemplo_2():
     # Grafiquemos ahora las sensibilidades y las elasticidades. Notemos que efectivamente la suma de las
     # Elasticidades es 1
     print(f"Suma de las elasticidades: {np.sum(L_2_info.elasticities_f) + np.sum(L_2_info.elasticities_p)}")
-
     mis.print_splitter()
+
 
     # Graficamos las sensibilidades y elasticidades
     mis.display_population_sen_elast(L_2_info)
