@@ -23,7 +23,9 @@ def gather_information(f, p, method="newton"):
 
     Parámetros:
         f: Vector de longitud m con las tasas de fecundidad de cada etapa.
-        p: Vector de longitud m-1 con las tasas de superviviencia entre etapas
+        p: Vector de longitud m-1 con las tasas de superviviencia entre etapas.
+        method: Método numérico que se utilizará para aproximar la tasa de crecimiento. Por defecto se utilizar "newton"
+        aunque también se encuentra disponible "bisec".
 
     Retorna:
         LeslieInformation, un objeto con la información calculada, la cual se encuentra detallada en la
