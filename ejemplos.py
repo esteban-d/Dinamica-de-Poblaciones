@@ -1,6 +1,5 @@
 import numpy as np
 from analysis import gather_information
-import builders as bl
 import miscellaneous as mis
 
 """
@@ -19,10 +18,8 @@ def ejemplo_1():
     p_1 = np.array([0.3, 0.7, 0.9, 0.9, 0.9, 0.6], dtype=float)
     X_1 = np.array([10, 2, 8, 5, 12, 0, 1], dtype=float)
 
-    L_1 = bl.build_leslie_matrix(f_1, p_1)
-
     print("Analicemos la matriz L_1")
-    L_1_info = gather_information(f_1, p_1)
+    L_1_info = gather_information(f_1, p_1).forPopulation(X_1)
     print(L_1_info)
 
     # Su índice de imprimitividad efectivamente es 1
@@ -34,9 +31,7 @@ def ejemplo_1():
     mis.print_splitter()
 
     # Se observa que coinciden
-    poblacion_obtenida = np.linalg.matrix_power(L_1, 1000) @ X_1
-    distribucion_obtenida = mis.normalize_1(poblacion_obtenida)
-    print(f"Distribución obtenida por franja etaria tras 1000 periodos: \n{distribucion_obtenida}")
+    mis.display_distributions_experimentally(L_1_info, T=1000)
     mis.print_splitter()
 
     # También podemos expresar la distribución con un gráfico de barras
@@ -44,7 +39,7 @@ def ejemplo_1():
 
     # Graficando podemos analizar cómo evoluciona la distribución y la población total
     # a lo largo del tiempo.
-    mis.display_population_evolution(L_1, X_1, 20, L_1_info)
+    mis.display_population_evolution(20, L_1_info)
 
     # Grafiquemos ahora las sensibilidades y las elasticidades. Notemos que efectivamente la suma de las
     # Elasticidades es 1
@@ -61,30 +56,21 @@ def ejemplo_2():
     p_2 = np.array([0.3, 0.7, 0.9, 0.9, 0.9], dtype=float)
     X_2 = np.array([10, 2, 8, 5, 12, 0], dtype=float)
 
-    L_2 = bl.build_leslie_matrix(f_2, p_2)
-
-
     print("Analicemos la matriz L_2")
-    L_2_info = gather_information(f_2, p_2)
+    L_2_info = gather_information(f_2, p_2).forPopulation(X_2)
     print(L_2_info)
 
     # Su indice de imprimitividad es efectivamente 2
     # Debería alternar entre a lo sumo dos distribuciones en el límite. 
     # Verifiquemos esto
-    configs = bl.compute_configurations(L_2_info, X_2)
-    distribuciones_esperadas = np.apply_along_axis(mis.normalize_1, 1, configs)
+    distribuciones_esperadas = np.apply_along_axis(mis.normalize_1, 1, L_2_info.configs)
     print(f"Distribución esperada por franja etaria")
     print(*distribuciones_esperadas, sep="\n")
     mis.print_splitter()
 
 
     # Se observa que coinciden
-    poblacion_obtenida = np.linalg.matrix_power(L_2, 1000) @ X_2
-    distribucion_obtenida_1 = mis.normalize_1(poblacion_obtenida)
-    distribucion_obtenida_2 = mis.normalize_1(L_2@poblacion_obtenida)
-    print("Distribuciones obtenidas por franja etaria tras 1000 periodos (o 1000 años):")
-    print(f"{distribucion_obtenida_1}")
-    print(f"{distribucion_obtenida_2}")
+    mis.display_distributions_experimentally(L_2_info, T=100)
     mis.print_splitter()
 
 
@@ -94,11 +80,11 @@ def ejemplo_2():
 
     # Graficando podemos analizar cómo evoluciona la distribución y la población total
     # a lo largo del tiempo.
-    mis.display_population_evolution(L_2, X_2, 20, L_2_info)
+    mis.display_population_evolution(20, L_2_info)
 
 
     # Verifiquemos que el límite predicho por el teorema 1 es correcto para una matriz no primitiva
-    mis.display_nonprimitive_evolution(L_2, X_2, 20, configs, L_2_info.lambda_0)
+    mis.display_nonprimitive_evolution(20, L_2_info)
 
 
     # Grafiquemos ahora las sensibilidades y las elasticidades. Notemos que efectivamente la suma de las
@@ -116,29 +102,24 @@ def ejemplo_3():
     p_2_dec = np.array([0.3, 0.7, 0.9, 0.9, 0.9], dtype=float)
     X_2_dec = np.array([10, 2, 8, 5, 12, 0], dtype=float)
 
-    L_2_dec = bl.build_leslie_matrix(f_2_dec, p_2_dec)
-
     # Confirmamos. que lambda_0 < 1. Esperamos que la población total decrezca en promedio 
     # con un patrón oscilatorio similar
-    print("Analicemos la matriz L_2_dec")
-    L_2_dec_info = gather_information(f_2_dec, p_2_dec)
+    print("Analicemos la matriz L_2_dec para la población inicial X_2_dec")
+    L_2_dec_info = gather_information(f_2_dec, p_2_dec).forPopulation(X_2_dec)
+
     print(L_2_dec_info)
 
-    mis.display_population_evolution(L_2_dec, X_2_dec, 40, L_2_dec_info)
+    mis.display_population_evolution(40, L_2_dec_info)
 
     # Escalamos la matriz para lograr que lambda_0 = 1. 
     stabilization_factor = 1/L_2_dec_info.R
     f_2_stab = (stabilization_factor)*f_2_dec
     p_2_stab = p_2_dec
-    X_2_stab = X_2_dec
 
     # Confirmamos que lambda_0 = 1. Esperamos que la población total 
     # se mantenga estable en promedio con un patrón oscilatorio similar
-    L_2_stab = bl.build_leslie_matrix(f_2_stab, p_2_stab)
-
-
     print("Analicemos la matriz L_2_stab")
-    L_2_stab_info = gather_information(f_2_stab, p_2_stab)
+    L_2_stab_info = gather_information(f_2_stab, p_2_stab).forPopulation(X_2_dec)
     print(L_2_stab_info)
 
-    mis.display_population_evolution(L_2_stab, X_2_stab, 40, L_2_stab_info)
+    mis.display_population_evolution(40, L_2_stab_info)

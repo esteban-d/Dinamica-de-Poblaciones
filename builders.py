@@ -346,37 +346,55 @@ def compute_imprimitivity_index(f):
     indexes = np.where(f>0)[0] + 1 
     return np.gcd.reduce(indexes)
 
-def compute_gamma(information: LeslieInformation, X):
+def is_viable(information: LeslieInformation, X):
+    # También podría usarse f
+    a = information.a
+    if np.any(X!=0):
+        i_X = np.min(np.where(X!=0)[0])
+        i_a = np.max(np.where(a!=0)[0])
+        return i_X <= i_a
+    
+    return False
+
+
+
+def compute_avg_eigen(information: LeslieInformation, X):
     """
-    Calcula el coeficiente gamma definido en el Teorema 2, aunque también utilizado en el
-    Teorema 3.
+    Calcula el autovector definido en el Teorema 2, aunque también utilizado en el
+    Teorema 3, es decir, el autovector gamma*[(c_1/lambda_0), ... , (c_i/(lambda_0^i)) , ... , (c_m/(lambda_0^m))], 
+    o un vector nulo si gamma es nulo.
 
     Parámetros:
     leslie_information: Objeto LeslieInformation correspondiente a la matriz de interés.
     X: Vector con la población inicial.
 
     Retorna
-    Coeficiente el factor gamma definido en el Teorema 2.
+    v: Autovector definido en el Teorema 2.
     """
+    c = information.c
+    m = len(c)
+
+    # Teorema 4 permite identificar si gamma es nulo sin errores numéricos
+    if not is_viable(information, X):
+        return np.zeros(m, dtype=float)
 
     p_prime = information.poly_p.deriv()
-    c = information.c
     lambda_0 = information.lambda_0
     g_j_lambda_0 = information.g_i_lambda_0
-
-    m = len(c)
 
     gamma = 0
     for j in range(m):
         gamma += ( (lambda_0 ** j) * g_j_lambda_0[j] * X[j]) / (p_prime(lambda_0) * c[j])
 
-    return gamma
+    v = information.right_eig / lambda_0
+
+    return gamma*v
 
 
 def compute_configurations(information: LeslieInformation, x):
     """
-    Para una matriz de Leslie con índice de imprimitividad k, calcula las (a lo sumo) k configuraciones estables
-    entre las cuales alterna definidas por el Teorema 1. En particular, calcula la única configuración estable
+    Para una matriz de Leslie con índice de imprimitividad k, calcula las (a lo sumo) k configuraciones
+    entre las cuales alterna definidas por el Teorema 1. En particular, calcula la única configuración
     definida en el Teorema 2 si k=1.
 
     Parámetros:
