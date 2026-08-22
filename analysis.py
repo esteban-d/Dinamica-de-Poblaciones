@@ -64,7 +64,7 @@ def gather_information(f, p, method="newton"):
     return LeslieInformation(lambda_0, right_eig,left_eig, sensi_f, sensi_p, elast_f, elast_p,f,p,imprimitivity_index, a, c, R, poly_p, g_i_lambda_0)
 
 
-def display_chacteristic_functions(f, p):
+def display_characteristic_functions(f, p):
     """
     Esta función tiene como objetivo visualizar las funciones caracteríticas de una matríz de Leslie (mxm). 
     Puede resultar útil en casos extremos para ayudar a elegir el mejor método para encontrar la tasa de crecimiento poblacional.

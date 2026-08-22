@@ -93,4 +93,4 @@ if __name__ == "__main__":
 
 
 # Para inspeccionar gráficamente alguno de los casos:
-# display_chacteristic_functions(f_1, p_1)
+# display_characteristic_functions(f_1, p_1)
