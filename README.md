@@ -1,7 +1,11 @@
-# Dinámica-de-Poblaciones
+# Dinámica de Poblaciones
 
 Proyecto en **Python** para predecir la evolución temporal de una población mediante
 **matrices de Leslie**.
+
+## Informe 
+
+Ver [Coria_Druetta_AN2.pdf](Coria_Druetta_AN2.pdf).
 
 ## Módulos
 
