@@ -45,7 +45,7 @@ def gather_information(f, p, method="newton"):
     if method == "newton":
         lambda_0 = met.newton(q, q_prime, cota_inf)
     elif method == "bisec":
-        lambda_0 = met.bisect(q, cota_inf, cota_sup)
+        lambda_0, _, _ = met.bisect(q, cota_inf, cota_sup)
     else:
         raise Exception("Método Inválido")
      
@@ -86,7 +86,7 @@ def display_chacteristic_functions(f, p):
     q = bl.gen_q(a)
     q_prime = bl.gen_q_prime(a)
 
-    lambda_0_bisec = met.bisect(q, cota_inf, cota_sup)
+    lambda_0_bisec, _, _ = met.bisect(q, cota_inf, cota_sup)
     lambda_0_newton = met.newton(q, q_prime, cota_inf)
 
     lambdas = np.linspace(cota_inf, cota_sup, int(np.ceil(10000*(cota_sup-cota_inf))))[1:]

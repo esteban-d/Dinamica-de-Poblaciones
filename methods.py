@@ -70,7 +70,7 @@ def bisect(g, a, b, sigma=def_tol, epsilon=def_tol, m=def_m):
         w = g(c)
         if np.abs(e) < sigma or np.abs(w) < epsilon:
             print(f"Bisección terminó tras {k} iteraciones.")
-            return c
+            return c, a, b
         if np.sign(w) != np.sign(u):
             b = c
             v = w

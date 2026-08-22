@@ -102,7 +102,7 @@ def ejemplo_3():
     p_2_dec = np.array([0.3, 0.7, 0.9, 0.9, 0.9], dtype=float)
     X_2_dec = np.array([10, 2, 8, 5, 12, 0], dtype=float)
 
-    # Confirmamos. que lambda_0 < 1. Esperamos que la población total decrezca en promedio 
+    # Confirmamos que lambda_0 < 1. Esperamos que la población total decrezca en promedio 
     # con un patrón oscilatorio similar
     print("Analicemos la matriz L_2_dec para la población inicial X_2_dec")
     L_2_dec_info = gather_information(f_2_dec, p_2_dec).forPopulation(X_2_dec)
