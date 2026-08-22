@@ -34,6 +34,9 @@ a información pertinente a la población inicial y una breve predicción de la 
 ### Ejemplo de uso
 
 ```python 
+import numpy as np
+from analysis import gather_information
+
 # Tasas de fecundidad
 f = np.array([0.0, 2, 0.0, 2.25, 0.0, 2.0], dtype=float)
 # Tasas de supervivencia
